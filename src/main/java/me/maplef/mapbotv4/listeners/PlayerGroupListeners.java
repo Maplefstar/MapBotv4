@@ -359,16 +359,6 @@ public class PlayerGroupListeners extends SimpleListenerHost {
 
         BotOperator.sendGroupMessage(e.getGroupId(), msg.toString().trim());
         Bukkit.getServer().broadcast(Component.text(CU.t(messages.getString("message-prefix") + messages.getString("welcome-new-message.player-group.server"))));
-//        if (Objects.requireNonNull(bot.getGroup(config.getLong("check-in-group"))).contains(e.getMember().getId())) {
-//            BotOperator.sendGroupMessage(config.getLong("check-in-group"), Objects.requireNonNull(messages.getString("congratulation-message")).replace("{PLAYER}", e.getMember().getNick()));
-//            bot.getGroup(config.getLong("check-in-group")).get(e.getMember().getId()).kick("您已经加入玩家群了，故将您移出审核群！");
-//        }
-//        try {
-//            String order = String.format("UPDATE EXAMINE SET USED = 1 WHERE QQ = '%s' AND CODE != 'null';", e.getMember().getId());
-//            new DatabaseOperator().executeCommand(order);
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
     }
 
     @EventHandler
@@ -426,13 +416,6 @@ public class PlayerGroupListeners extends SimpleListenerHost {
 
         BotOperator.sendGroupMessage(config.getLong("player-group"), playerGroupMsg);
         BotOperator.sendGroupMessage(config.getLong("op-group"), opGroupMsg);
-
-//        try {
-//            String order = String.format("UPDATE EXAMINE SET CODE = '已退群' WHERE QQ = '%s' AND CODE != 'null';", QQ);
-//            new DatabaseOperator().executeCommand(order);
-//        } catch (SQLException ex) {
-//            ex.printStackTrace();
-//        }
     }
 
     @EventHandler
@@ -501,50 +484,6 @@ public class PlayerGroupListeners extends SimpleListenerHost {
             default:
                 Bukkit.getLogger().info("Unexpected response code: " + responseCode);
         }
-
-
-
-
-//        try {
-//            DatabaseOperator.queryExamine(e.getFromId()).get("APPROVED");
-//        } catch (PlayerNotFoundException ex) {
-//            e.reject(false, Objects.requireNonNull(config.getString("player-group-auto-manage.reject-message")));
-//            BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 " + e.component7() + " 入群");
-//            return;
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//
-//        try {
-//            if ((boolean) DatabaseOperator.queryExamine(e.getFromId()).get("USED")) {
-//                e.reject(false, Objects.requireNonNull(config.getString("player-group-auto-manage.reject-message")));
-//                BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 " + e.component7() + " 入群");
-//                return;
-//            }
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
-//
-//        String code = e.getMessage().replaceAll(".*\\n.*答案：", "");
-//        if (code.equals("null") || code.equals("已退群")) {
-//            e.reject(false, Objects.requireNonNull(config.getString("player-group-auto-manage.reject-message")));
-//            BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 " + e.component7() + " 入群");
-//            return;
-//        }
-//        code = code.toUpperCase(Locale.ROOT);
-//        try {
-//            String InvCode = (String) DatabaseOperator.queryExamine(e.getFromId()).get("CODE");
-//            if (InvCode.equals(code)) {
-//                e.accept();
-//                BotOperator.sendGroupMessage(config.getLong("op-group"), "已同意 " + e.component7() + " 入群");
-//            }
-//            else {
-//                e.reject(false, "邀请码错误");
-//                BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 " + e.component7() + " 入群，该玩家的邀请码为" + InvCode + "，而玩家填入的邀请码为" + code);
-//            }
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
     }
 
     @EventHandler
@@ -646,40 +585,4 @@ public class PlayerGroupListeners extends SimpleListenerHost {
         } catch (NullPointerException ignored) {
         }
     }
-
-//    @EventHandler
-//    public void onExaminePlus(GroupMessageEvent e) {
-//        if (e.getGroup().getId() != examineGroup) return;
-//        QuoteReply quoteReply = e.getMessage().get(QuoteReply.Key);
-//        if (quoteReply == null) return;
-//        String message = quoteReply.getSource().getOriginalMessage().toString();
-//
-//        long qq;
-//        try {
-//            qq = Long.parseLong(DatabaseOperator.queryExaminePlus(message).get("QQ").toString());
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//            return;
-//        }
-//
-//        // 临时
-//        String[] var1 = e.getMessage().get(PlainText.Key).toString().split(" ");
-//        if (var1.length == 1 && var1[0].equals("通过")) {
-//            Message[] messages = new Message[3];
-//            messages[0] = new MessageChainBuilder().append(String.valueOf(qq)).build();
-//            messages[1] = new MessageChainBuilder().append(String.valueOf(qq)).append("@qq.com").build();
-//            messages[2] = new MessageChainBuilder().append("通过").build();
-//            Examine.ProcessingCommand(messages, 0);
-//        } else if (var1.length == 2 && var1[0].equals("不通过")) {
-//            Message[] messages = new Message[4];
-//            messages[0] = new MessageChainBuilder().append(String.valueOf(qq)).build();
-//            messages[1] = new MessageChainBuilder().append(String.valueOf(qq)).append("@qq.com").build();
-//            messages[2] = new MessageChainBuilder().append("不通过").build();
-//            messages[3] = new MessageChainBuilder().append(var1[1]).build();
-//            Examine.ProcessingCommand(messages, 0);
-//        }
-//        BotOperator.sendGroupMessage(examineGroup, "执行成功");
-//    }
-
-
 }

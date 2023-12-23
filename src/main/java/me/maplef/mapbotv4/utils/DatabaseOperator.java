@@ -27,27 +27,27 @@ public class DatabaseOperator {
 
     private final Connection c = connect();
 
-    public void init() throws SQLException{
-        if(config.getBoolean("use-mysql")){
+    public void init() throws SQLException {
+        if (config.getBoolean("use-mysql")) {
             PreparedStatement ps = c.prepareStatement(
                     "CREATE TABLE IF NOT EXISTS PLAYER (" +
-                    "    NAME    TEXT    NOT NULL," +
-                    "    QQ      TEXT    NOT NULL," +
-                    "    UUID    TEXT," +
-                    "    MSGREC  BOOLEAN DEFAULT 1" +
-                    ");");
+                            "    NAME    TEXT    NOT NULL," +
+                            "    QQ      TEXT    NOT NULL," +
+                            "    UUID    TEXT," +
+                            "    MSGREC  BOOLEAN DEFAULT 1" +
+                            ");");
             ps.execute();
 
             ps = c.prepareStatement(
                     "CREATE TABLE IF NOT EXISTS cat_images (" +
-                    "`id`               bigint      UNSIGNED NOT NULL AUTO_INCREMENT," +
-                    "`uploaded_time`    timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP," +
-                    "`uploader`         text        CHARACTER SET utf8 NULL," +
-                    "`base64`           longtext    NOT NULL," +
-                    "`url`              text        NULL," +
-                    "`cat_name`         text        NULL," +
-                    "PRIMARY KEY (`id`)" +
-                    ");");
+                            "`id`               bigint      UNSIGNED NOT NULL AUTO_INCREMENT," +
+                            "`uploaded_time`    timestamp   NOT NULL DEFAULT CURRENT_TIMESTAMP," +
+                            "`uploader`         text        CHARACTER SET utf8 NULL," +
+                            "`base64`           longtext    NOT NULL," +
+                            "`url`              text        NULL," +
+                            "`cat_name`         text        NULL," +
+                            "PRIMARY KEY (`id`)" +
+                            ");");
             ps.execute();
 
             ps.close();
@@ -57,12 +57,12 @@ public class DatabaseOperator {
     private Connection connect() {
         FileConfiguration config = configManager.getConfig();
 
-        if(config.getBoolean("use-mysql")){
+        if (config.getBoolean("use-mysql")) {
             Connection conn = null;
-            try{
+            try {
                 Class.forName(JDBC_DRIVER);
                 conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-            } catch (Exception e){
+            } catch (Exception e) {
                 e.printStackTrace();
             }
             return conn;
@@ -81,16 +81,17 @@ public class DatabaseOperator {
     public static Map<String, Object> queryPlayer(Object arg) throws SQLException, PlayerNotFoundException {
         Map<String, Object> queryRes = new HashMap<>();
 
-        String name = "[-]"; long QQ = -1L;
-        if(arg instanceof String) name = (String) arg;
+        String name = "[-]";
+        long QQ = -1L;
+        if (arg instanceof String) name = (String) arg;
         else if (arg instanceof Long) QQ = (Long) arg;
 
-        try(Statement stmt = new DatabaseOperator().getConnect().createStatement()){
+        try (Statement stmt = new DatabaseOperator().getConnect().createStatement()) {
             ResultSet res = stmt.executeQuery("SELECT * FROM PLAYER;");
-            while(res.next()){
-                if(res.getString("NAME").toLowerCase(Locale.ROOT).contains(name.toLowerCase(Locale.ROOT)) || res.getLong("QQ") == QQ){
+            while (res.next()) {
+                if (res.getString("NAME").toLowerCase(Locale.ROOT).contains(name.toLowerCase(Locale.ROOT)) || res.getLong("QQ") == QQ) {
                     ResultSetMetaData data = res.getMetaData();
-                    for(int i = 1; i <= data.getColumnCount(); ++i)
+                    for (int i = 1; i <= data.getColumnCount(); ++i)
                         queryRes.put(data.getColumnName(i), res.getObject(data.getColumnName(i)));
                     return queryRes;
                 }
@@ -100,51 +101,13 @@ public class DatabaseOperator {
         throw new PlayerNotFoundException();
     }
 
-    public void executeCommand(String sqlCommand) throws SQLException{
-        try(Statement stmt = c.createStatement()){
+    public void executeCommand(String sqlCommand) throws SQLException {
+        try (Statement stmt = c.createStatement()) {
             stmt.execute(sqlCommand);
         }
     }
 
-    public Connection getConnect(){
+    public Connection getConnect() {
         return c;
     }
-
-//    public static Map<String, Object> queryExamine(long QQ) throws SQLException, PlayerNotFoundException {
-//        Map<String, Object> queryRes = new HashMap<>();
-//
-//        try(Statement stmt = new DatabaseOperator().getConnect().createStatement()){
-//            ResultSet res = stmt.executeQuery("SELECT * FROM EXAMINE;");
-//            while(res.next()){
-//                if(res.getLong("QQ") == QQ){
-//                    if (res.getString("CODE").equals("null")) continue;
-//                    if (res.getString("CODE").equals("已退群")) continue;
-//                    ResultSetMetaData data = res.getMetaData();
-//                    for(int i = 1; i <= data.getColumnCount(); ++i)
-//                        queryRes.put(data.getColumnName(i), res.getObject(data.getColumnName(i)));
-//                    return queryRes;
-//                }
-//            }
-//        }
-//
-//        throw new PlayerNotFoundException();
-//    }
-//
-//    public static Map<String, Object> queryExaminePlus(String id) throws PlayerNotFoundException, SQLException {
-//        Map<String, Object> queryRes = new HashMap<>();
-//
-//        try(Statement stmt = new DatabaseOperator().getConnect().createStatement()){
-//            ResultSet res = stmt.executeQuery("SELECT * FROM EXAMINE_PLUS;");
-//            while(res.next()){
-//                if(Objects.equals(res.getString("MSG"), id)){
-//                    ResultSetMetaData data = res.getMetaData();
-//                    for(int i = 1; i <= data.getColumnCount(); ++i)
-//                        queryRes.put(data.getColumnName(i), res.getObject(data.getColumnName(i)));
-//                    return queryRes;
-//                }
-//            }
-//        }
-//
-//        throw new PlayerNotFoundException();
-//    }
 }
