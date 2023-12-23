@@ -8,6 +8,7 @@ import me.maplef.mapbotv4.managers.LoopJobManager;
 import me.maplef.mapbotv4.plugins.BotQQOperator;
 import me.maplef.mapbotv4.utils.*;
 import net.kyori.adventure.text.Component;
+import net.mamoe.mirai.utils.BotConfiguration;
 import net.milkbowl.vault.economy.Economy;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -41,7 +42,8 @@ public class Main extends JavaPlugin {
             return;
         }
 
-        FixProtocolVersion.update();
+        // fix-protocol-version
+        FixProtocolVersion.load(BotConfiguration.MiraiProtocol.ANDROID_PAD);
 
         configManager = new ConfigManager();
         FileConfiguration messageConfig = configManager.getMessageConfig();
@@ -76,6 +78,7 @@ public class Main extends JavaPlugin {
         getServer().broadcast(Component.text(CU.t(messageConfig.getString("message-prefix") + messageConfig.getString("enable-message.server"))));
 
         NeteaseMusicUtils.loadCookie();
+
     }
 
     @Override

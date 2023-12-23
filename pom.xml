@@ -6,7 +6,7 @@
 
     <groupId>me.maplef</groupId>
     <artifactId>mapbotv4</artifactId>
-    <version>0.15.1-catland_v5</version>
+    <version>0.16.0-catland</version>
     <packaging>jar</packaging>
     <build>
         <plugins>
@@ -16,7 +16,14 @@
                 <configuration>
                     <source>16</source>
                     <target>16</target>
-
+                </configuration>
+            </plugin>
+            <plugin>
+                <artifactId>maven-assembly-plugin</artifactId>
+                <configuration>
+                    <descriptorRefs>
+                        <descriptorRef>jar-with-dependencies</descriptorRef>
+                    </descriptorRefs>
                 </configuration>
             </plugin>
         </plugins>
@@ -48,9 +55,11 @@
 
     <dependencies>
         <dependency>
-            <groupId>xyz.cssxsh</groupId>
+            <groupId>com.github.cssxsh</groupId>
             <artifactId>fix-protocol-version</artifactId>
-            <version>1.5.0</version>
+            <version>1.13.0</version>
+            <scope>system</scope>
+            <systemPath>${project.basedir}/lib/fix-protocol-version-1.13.0.mirai2.jar</systemPath>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
@@ -60,13 +69,13 @@
         <dependency>
             <groupId>io.papermc.paper</groupId>
             <artifactId>paper-api</artifactId>
-            <version>1.19.2-R0.1-SNAPSHOT</version>
+            <version>1.20.2-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>net.mamoe</groupId>
             <artifactId>mirai-core-jvm</artifactId>
-            <version>2.15.0-M1</version>
+            <version>2.16.0</version>
         </dependency>
         <dependency>
             <groupId>com.github.MilkBowl</groupId>
@@ -112,7 +121,12 @@
         <dependency>
             <groupId>com.mailjet</groupId>
             <artifactId>mailjet-client</artifactId>
-            <version>5.2.1</version>
+            <version>5.2.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.asynchttpclient</groupId>
+            <artifactId>async-http-client</artifactId>
+            <version>3.0.0.Beta2</version>
         </dependency>
     </dependencies>
 

@@ -110,41 +110,41 @@ public class DatabaseOperator {
         return c;
     }
 
-    public static Map<String, Object> queryExamine(long QQ) throws SQLException, PlayerNotFoundException {
-        Map<String, Object> queryRes = new HashMap<>();
-
-        try(Statement stmt = new DatabaseOperator().getConnect().createStatement()){
-            ResultSet res = stmt.executeQuery("SELECT * FROM EXAMINE;");
-            while(res.next()){
-                if(res.getLong("QQ") == QQ){
-                    if (res.getString("CODE").equals("null")) continue;
-                    if (res.getString("CODE").equals("已退群")) continue;
-                    ResultSetMetaData data = res.getMetaData();
-                    for(int i = 1; i <= data.getColumnCount(); ++i)
-                        queryRes.put(data.getColumnName(i), res.getObject(data.getColumnName(i)));
-                    return queryRes;
-                }
-            }
-        }
-
-        throw new PlayerNotFoundException();
-    }
-
-    public static Map<String, Object> queryExaminePlus(String id) throws PlayerNotFoundException, SQLException {
-        Map<String, Object> queryRes = new HashMap<>();
-
-        try(Statement stmt = new DatabaseOperator().getConnect().createStatement()){
-            ResultSet res = stmt.executeQuery("SELECT * FROM EXAMINE_PLUS;");
-            while(res.next()){
-                if(Objects.equals(res.getString("MSG"), id)){
-                    ResultSetMetaData data = res.getMetaData();
-                    for(int i = 1; i <= data.getColumnCount(); ++i)
-                        queryRes.put(data.getColumnName(i), res.getObject(data.getColumnName(i)));
-                    return queryRes;
-                }
-            }
-        }
-
-        throw new PlayerNotFoundException();
-    }
+//    public static Map<String, Object> queryExamine(long QQ) throws SQLException, PlayerNotFoundException {
+//        Map<String, Object> queryRes = new HashMap<>();
+//
+//        try(Statement stmt = new DatabaseOperator().getConnect().createStatement()){
+//            ResultSet res = stmt.executeQuery("SELECT * FROM EXAMINE;");
+//            while(res.next()){
+//                if(res.getLong("QQ") == QQ){
+//                    if (res.getString("CODE").equals("null")) continue;
+//                    if (res.getString("CODE").equals("已退群")) continue;
+//                    ResultSetMetaData data = res.getMetaData();
+//                    for(int i = 1; i <= data.getColumnCount(); ++i)
+//                        queryRes.put(data.getColumnName(i), res.getObject(data.getColumnName(i)));
+//                    return queryRes;
+//                }
+//            }
+//        }
+//
+//        throw new PlayerNotFoundException();
+//    }
+//
+//    public static Map<String, Object> queryExaminePlus(String id) throws PlayerNotFoundException, SQLException {
+//        Map<String, Object> queryRes = new HashMap<>();
+//
+//        try(Statement stmt = new DatabaseOperator().getConnect().createStatement()){
+//            ResultSet res = stmt.executeQuery("SELECT * FROM EXAMINE_PLUS;");
+//            while(res.next()){
+//                if(Objects.equals(res.getString("MSG"), id)){
+//                    ResultSetMetaData data = res.getMetaData();
+//                    for(int i = 1; i <= data.getColumnCount(); ++i)
+//                        queryRes.put(data.getColumnName(i), res.getObject(data.getColumnName(i)));
+//                    return queryRes;
+//                }
+//            }
+//        }
+//
+//        throw new PlayerNotFoundException();
+//    }
 }

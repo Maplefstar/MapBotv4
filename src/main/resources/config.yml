@@ -10,6 +10,8 @@ op-group: 10086  # the group where managers and operators in
 check-in-group: 10101  # the group to check in
 examine-group: 10100
 
+access-token:
+
 use-mysql: false  # use MySQL or SQLite
 mysql-host:
 mysql-port:
