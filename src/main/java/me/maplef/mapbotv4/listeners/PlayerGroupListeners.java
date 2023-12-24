@@ -46,6 +46,7 @@ public class PlayerGroupListeners extends SimpleListenerHost {
     FileConfiguration config = configManager.getConfig();
     private final Long opGroup = config.getLong("op-group");
     private final Long playerGroup = config.getLong("player-group");
+    private final Long whitelistGroup = config.getLong("whitelist-group");
 
     private final Bot bot = BotOperator.getBot();
     private final PluginManager pluginManager = new PluginManager();
@@ -72,7 +73,7 @@ public class PlayerGroupListeners extends SimpleListenerHost {
         if (messageContent == null) return;
 
         String textString = messageContent.contentToString().trim();
-        if(!Pattern.matches(commandPattern, textString)) return;
+        if (!Pattern.matches(commandPattern, textString)) return;
 
         String command = textString.split(" ", 2)[0].substring(1);
 
@@ -359,6 +360,10 @@ public class PlayerGroupListeners extends SimpleListenerHost {
 
         BotOperator.sendGroupMessage(e.getGroupId(), msg.toString().trim());
         Bukkit.getServer().broadcast(Component.text(CU.t(messages.getString("message-prefix") + messages.getString("welcome-new-message.player-group.server"))));
+
+        String message = Objects.requireNonNull(messages.getString("congratulation-message"))
+                .replace("{PLAYER}", e.getMember().getNameCard());
+        BotOperator.sendGroupMessage(whitelistGroup, message);
     }
 
     @EventHandler
@@ -427,12 +432,10 @@ public class PlayerGroupListeners extends SimpleListenerHost {
 
         Bukkit.getServer().getLogger().info(e.getMessage());
 
-
         long qq = e.getFromId();
         String code = e.getMessage().replaceAll(".*\\n.*答案：", "");
         code = code.toUpperCase(Locale.ROOT);
         InvitationCodeApiClient.ApiResponse apiResponse = checkInvitationCode(qq, code, true);
-
 
         String responseBody = apiResponse.getBody();
         int responseCode = -1;
@@ -445,44 +448,46 @@ public class PlayerGroupListeners extends SimpleListenerHost {
             exception.printStackTrace();
         }
 
+        Bukkit.getLogger().info("Response Code: " + responseCode);
+
         switch (responseCode) {
-            case 0:
+            case 0 -> {
                 // Success
                 e.accept();
                 BotOperator.sendGroupMessage(config.getLong("op-group"), "已同意 " + e.component7() + " 入群");
-            case 1:
+            }
+            case 1 -> {
                 // Unauthorized
                 e.reject(false, Objects.requireNonNull(config.getString("player-group-auto-manage.reject-message")));
-                BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 " + e.component7() + " 入群");
-                return;
-            case 2:
+                BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 %s 入群，响应码：%d，原因：%s".formatted(e.component7(), responseCode, "Unauthorized"));
+            }
+            case 2 -> {
                 // Not submitted
                 e.reject(false, Objects.requireNonNull(config.getString("player-group-auto-manage.reject-message")));
-                BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 " + e.component7() + " 入群");
-                return;
-            case 3:
+                BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 %s 入群，响应码：%d，原因：%s".formatted(e.component7(), responseCode, "Not submitted"));
+            }
+            case 3 -> {
                 // Invitation code not found
                 e.reject(false, Objects.requireNonNull(config.getString("player-group-auto-manage.reject-message")));
-                BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 " + e.component7() + " 入群");
-                return;
-            case 4:
+                BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 %s 入群，响应码：%d，原因：%s".formatted(e.component7(), responseCode, "Invitation code not found"));
+            }
+            case 4 -> {
                 // Wrong invitation code
                 e.reject(false, "邀请码错误");
-                BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 " + e.component7() + " 入群，该玩家邀请码填写错误");
-                return;
-            case 5:
+                BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 %s 入群，响应码：%d，原因：%s".formatted(e.component7(), responseCode, "Wrong invitation code"));
+            }
+            case 5 -> {
                 // Already used
                 e.reject(false, Objects.requireNonNull(config.getString("player-group-auto-manage.reject-message")));
-                BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 " + e.component7() + " 入群");
-                return;
-            case -1:
+                BotOperator.sendGroupMessage(config.getLong("op-group"), "已拒绝 %s 入群，响应码：%d，原因：%s".formatted(e.component7(), responseCode, "Already used"));
+            }
+            case -1 -> {
                 // 出错了
-                e.reject(false, Objects.requireNonNull(config.getString("处理申请时出现异常，请再试一次")));
-                BotOperator.sendGroupMessage(config.getLong("op-group"), "处理申请时出现异常，已拒绝 " + e.component7() + " 入群");
+                e.reject(false, Objects.requireNonNull(config.getString("处理申请时出现异常，请联系管理员")));
+                BotOperator.sendGroupMessage(config.getLong("op-group"), "处理加群申请时出现问题，responseBody没有被正确解析，已拒绝 " + e.component7() + " 入群");
                 Bukkit.getLogger().severe("处理加群申请时出现问题，responseBody没有被正确解析");
-                return;
-            default:
-                Bukkit.getLogger().info("Unexpected response code: " + responseCode);
+            }
+            default -> Bukkit.getLogger().info("Unexpected response code: " + responseCode);
         }
     }
 

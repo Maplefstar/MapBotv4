@@ -1,6 +1,6 @@
 name: MapBot
 author: Maplef
-version: '${project.version}'
+version: 0.16.0
 main: me.maplef.mapbotv4.Main
 api-version: 1.20
 depend:

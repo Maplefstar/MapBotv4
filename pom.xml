@@ -6,13 +6,14 @@
 
     <groupId>me.maplef</groupId>
     <artifactId>mapbotv4</artifactId>
-    <version>0.16.0-catland</version>
+    <version>0.16.0</version>
     <packaging>jar</packaging>
     <build>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.8.1</version>
                 <configuration>
                     <source>16</source>
                     <target>16</target>
@@ -55,7 +56,12 @@
 
     <dependencies>
         <dependency>
-            <groupId>com.github.cssxsh</groupId>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-assembly-plugin</artifactId>
+            <version>3.0.0</version>
+        </dependency>
+        <dependency>
+            <groupId>xyz.cssxsh.mirai.tool</groupId>
             <artifactId>fix-protocol-version</artifactId>
             <version>1.13.0</version>
             <scope>system</scope>

@@ -14,24 +14,24 @@ import org.bukkit.configuration.file.FileConfiguration;
 public class CheckInGroupListeners extends SimpleListenerHost {
     ConfigManager configManager = new ConfigManager();
 
-    @EventHandler
-    public void onJoinGroupRequest(MemberJoinRequestEvent e){
-        FileConfiguration config = configManager.getConfig();
-
-        long checkInGroup = config.getLong("check-in-group");
-
-        if(!config.getBoolean("check-in-group-auto-manage.enable")) return;
-        if(e.getGroupId() != checkInGroup) return;
-
-        if(config.getInt("check-in-group-auto-manage.minimum-QQ-level") > 0 ){
-            if(Mirai.getInstance().queryProfile(e.getBot(), e.getFromId()).getQLevel() < config.getInt("check-in-group-auto-manage.minimum-QQ-level"))
-                e.reject(false, "因QQ等级过低判定为小号，请使用大号入群");
-            else
-                e.accept();
-        } else {
-            e.accept();
-        }
-    }
+//    @EventHandler
+//    public void onJoinGroupRequest(MemberJoinRequestEvent e){
+//        FileConfiguration config = configManager.getConfig();
+//
+//        long checkInGroup = config.getLong("check-in-group");
+//
+//        if(!config.getBoolean("check-in-group-auto-manage.enable")) return;
+//        if(e.getGroupId() != checkInGroup) return;
+//
+//        if(config.getInt("check-in-group-auto-manage.minimum-QQ-level") > 0 ){
+//            if(Mirai.getInstance().queryProfile(e.getBot(), e.getFromId()).getQLevel() < config.getInt("check-in-group-auto-manage.minimum-QQ-level"))
+//                e.reject(false, "因QQ等级过低判定为小号，请使用大号入群");
+//            else
+//                e.accept();
+//        } else {
+//            e.accept();
+//        }
+//    }
 
     @EventHandler
     public void onNewCome(MemberJoinEvent e){
