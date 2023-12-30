@@ -5,7 +5,6 @@ bot-login-device: 'ANDROID_PHONE'  # ANDROID_PHONE, ANDROID_PAD, ANDROID_WATCH, 
 super-admin-account: [123, 456]  # super administrator accounts
 
 player-group: 10000  # the number of QQ group where players are in
-inner-player-group: 10010  # not very useful, just ignore it
 op-group: 10086  # the group where managers and operators in
 check-in-group: 10101  # the group to check in
 examine-group: 10100
@@ -18,6 +17,13 @@ mysql-port:
 mysql-database:
 mysql-username:
 mysql-password:
+
+# examine database
+ex-host:
+ex-port:
+ex-database:
+ex-username:
+ex-password:
 
 QWeather-APIKey: 'qwq'  # 和风天气API密钥
 
@@ -143,24 +149,6 @@ netease-cloud-music:
   music:
     send-mode: card # card 以卡片形式发送 , voice 以语音形式发送 , both 我全都要！
     sound-quality-level: standard # standard 标准, higher 较高, exhigh 极高
-
-
-# 弃用功能，除非你知道会发生发什么，否则不要开启
-inner-player-group-auto-manage:
-  invite:
-    enable: false
-    cron: '0 0 0/1 * * ?'
-    requirement: 1000  # minutes per week
-    blacklist:
-      - 'player_name'
-      - 'qaq'
-  kick:
-    enable: false
-    cron: '0 0 18 ? * 7'
-    requirement: 1000
-    whitelist:
-      - 'player_name'
-      - 'qwq'
 
 examine:
   api-key:

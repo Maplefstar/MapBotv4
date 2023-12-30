@@ -46,7 +46,7 @@ public class PlayerGroupListeners extends SimpleListenerHost {
     FileConfiguration config = configManager.getConfig();
     private final Long opGroup = config.getLong("op-group");
     private final Long playerGroup = config.getLong("player-group");
-    private final Long whitelistGroup = config.getLong("whitelist-group");
+    private final Long checkinGroup = config.getLong("check-in-group");
 
     private final Bot bot = BotOperator.getBot();
     private final PluginManager pluginManager = new PluginManager();
@@ -363,7 +363,7 @@ public class PlayerGroupListeners extends SimpleListenerHost {
 
         String message = Objects.requireNonNull(messages.getString("congratulation-message"))
                 .replace("{PLAYER}", e.getMember().getNameCard());
-        BotOperator.sendGroupMessage(whitelistGroup, message);
+        BotOperator.sendGroupMessage(checkinGroup, message);
     }
 
     @EventHandler

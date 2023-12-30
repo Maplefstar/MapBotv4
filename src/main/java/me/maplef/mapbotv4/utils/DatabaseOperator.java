@@ -56,26 +56,15 @@ public class DatabaseOperator {
 
     private Connection connect() {
         FileConfiguration config = configManager.getConfig();
-
-        if (config.getBoolean("use-mysql")) {
-            Connection conn = null;
-            try {
-                Class.forName(JDBC_DRIVER);
-                conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            return conn;
-        } else {
-            String url = "jdbc:sqlite:.\\plugins\\MapBot\\database.db";
-            Connection conn = null;
-            try {
-                conn = DriverManager.getConnection(url);
-            } catch (SQLException e) {
-                e.printStackTrace();
-            }
-            return conn;
+        Connection conn = null;
+        try {
+            Class.forName(JDBC_DRIVER);
+            conn = DriverManager.getConnection(DB_URL, USERNAME, PASSWORD);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return conn;
+
     }
 
     public static Map<String, Object> queryPlayer(Object arg) throws SQLException, PlayerNotFoundException {
