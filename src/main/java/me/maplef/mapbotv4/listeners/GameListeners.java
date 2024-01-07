@@ -25,6 +25,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -35,6 +36,10 @@ public class GameListeners implements Listener {
     @EventHandler
     public void onMessageForward(AsyncChatEvent e) {
         FileConfiguration config = configManager.getConfig();
+
+        for (String id : config.getStringList("block-id")) {
+            if (e.getPlayer().getName().equalsIgnoreCase(id.toLowerCase())) return;
+        }
 
         Long groupID = config.getLong("player-group");
 

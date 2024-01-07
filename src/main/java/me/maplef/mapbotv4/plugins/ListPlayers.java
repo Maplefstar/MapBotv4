@@ -21,14 +21,25 @@ import java.util.List;
 import java.util.Map;
 
 public class ListPlayers implements MapbotPlugin {
-    ConfigManager configManager = new ConfigManager();
+    static ConfigManager configManager = new ConfigManager();
+    static FileConfiguration config = configManager.getConfig();
     FileConfiguration messages = configManager.getMessageConfig();
 
-    public static List<String> list(){
+    static List<String> ids = config.getStringList("block-id");
+    public static List<String> list() {
         List<String> onlineList = new ArrayList<>();
-        for (Player player : Bukkit.getServer().getOnlinePlayers())
-            onlineList.add(player.getName());
-
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            boolean foundMatch = false;
+            for (String id : ids) {
+                if (player.getName().equalsIgnoreCase(id)) {
+                    foundMatch = true;
+                    break;
+                }
+            }
+            if (!foundMatch) {
+                onlineList.add(player.getName());
+            }
+        }
         return onlineList;
     }
 

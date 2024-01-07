@@ -52,55 +52,74 @@ public class DatabaseExamine implements MapbotPlugin {
             // 获取指定qq的examine表中的数据
             long qq = Long.parseLong(args[1].contentToString());
             Map<String, Object> queryRes = new HashMap<>();
-            try {
-                Statement stmt = c.createStatement();
-                ResultSet rs = stmt.executeQuery("SELECT * FROM examine WHERE qq = '%d';".formatted(qq));
-                if (rs.next()) {
-                    ResultSetMetaData data = rs.getMetaData();
-                    for (int i = 1; i <= data.getColumnCount(); ++i)
-                        queryRes.put(data.getColumnName(i), rs.getObject(data.getColumnName(i)));
-                } else {
-                    return MessageUtils.newChain(new At(senderID)).plus(" " + "没有查到相关数据");
-                }
 
-                // 查询审核是否通过
-                if ((boolean) queryRes.get("passed")) {
-                    // 通过，则查询invitation_code表中的信息
-                    String uuid = String.valueOf(queryRes.get("uuid"));
-                    Statement stmt2 = c.createStatement();
-                    ResultSet rs2 = stmt.executeQuery("SELECT * FROM invitation_code WHERE uuid = '%s';".formatted(uuid));
-                    Map<String, Object> queryRes2 = new HashMap<>();
-                    if (rs2.next()) {
-                        ResultSetMetaData data = rs2.getMetaData();
-                        for (int i = 1; i <= data.getColumnCount(); ++i)
-                            queryRes2.put(data.getColumnName(i), rs2.getObject(data.getColumnName(i)));
-                    } else {
-                        // 不应该查询不到
-                        return MessageUtils.newChain(new At(senderID)).plus(" " + "该玩家已通过审核，但没有在invitation_code表中查到相关数据");
+            try (PreparedStatement pstmt = c.prepareStatement("SELECT * FROM examine WHERE qq = ?")) {
+                pstmt.setLong(1, qq);
+                try (ResultSet rs = pstmt.executeQuery()) {
+                    boolean hasData = rs.next();
+                    if (!hasData) {
+                        return MessageUtils.newChain(new At(senderID)).plus(" " + "没有查到相关数据");
                     }
-                    // 获取examine表中的数据
-                    String gid = String.valueOf(queryRes.get("gid"));
-                    String email = String.valueOf(queryRes.get("email"));
-                    // 获取invitation_code表中的数据
-                    String code = String.valueOf(queryRes2.get("invitation_code"));
-                    boolean used = (Boolean) queryRes2.get("used");
-                    String used_time = String.valueOf(queryRes2.get("used_time"));
-                    return MessageUtils.newChain(new At(senderID)).plus(" " + "QQ为%d的用户信息：\n邀请码：%s\n邮箱：%s\n游戏id：%s\n邀请码是否使用：%s\n邀请码使用时间：%s\n数据uuid：%s".formatted(qq, code, email, gid, used, used_time, uuid));
-                } else {
-                    // 不通过
-                    // 获取examine表中的数据
-                    String gid = String.valueOf(queryRes.get("gid"));
-                    String email = String.valueOf(queryRes.get("email"));
-                    String refuse_reason = String.valueOf(queryRes.get("refuse_reason"));
-                    String uuid = String.valueOf(queryRes.get("uuid"));
-                    return MessageUtils.newChain(new At(senderID)).plus(" " + "QQ为%d的用户信息：\n该用户审核未通过，原因为：\n%s\n游戏id：%s\n邮箱：%s\n数据uuid：%s".formatted(qq, refuse_reason, gid, email, uuid));
+
+                    boolean flag = false;
+                    do {
+                        ResultSetMetaData data = rs.getMetaData();
+                        for (int i = 1; i <= data.getColumnCount(); ++i) {
+                            queryRes.put(data.getColumnName(i), rs.getObject(data.getColumnName(i)));
+                        }
+
+                        if ((boolean) queryRes.get("passed")) {
+                            flag = true;
+                            break;
+                        }
+                        queryRes.clear();
+                    } while (rs.next());
+
+                    if (flag) {
+                        // 通过，则查询invitation_code表中的信息
+                        String uuid = String.valueOf(queryRes.get("uuid"));
+                        try (Statement stmt2 = c.createStatement(); ResultSet rs2 = stmt2.executeQuery("SELECT * FROM invitation_code WHERE uuid = '%s';".formatted(uuid))) {
+                            Map<String, Object> queryRes2 = new HashMap<>();
+                            if (rs2.next()) {
+                                ResultSetMetaData data = rs2.getMetaData();
+                                for (int i = 1; i <= data.getColumnCount(); ++i) {
+                                    queryRes2.put(data.getColumnName(i), rs2.getObject(data.getColumnName(i)));
+                                }
+                            } else {
+                                return MessageUtils.newChain(new At(senderID)).plus(" " + "该玩家已通过审核，但没有在invitation_code表中查到相关数据");
+                            }
+
+                            // 获取examine表中的数据
+                            String gid = String.valueOf(queryRes.get("gid"));
+                            String email = String.valueOf(queryRes.get("email"));
+
+                            // 获取invitation_code表中的数据
+                            String code = String.valueOf(queryRes2.get("invitation_code"));
+                            boolean used = (Boolean) queryRes2.get("used");
+                            String used_time = String.valueOf(queryRes2.get("used_time"));
+
+                            return MessageUtils.newChain(new At(senderID)).plus(" " + "QQ为%d的用户信息：\n邀请码：%s\n邮箱：%s\n游戏id：%s\n邀请码是否使用：%s\n邀请码使用时间：%s\n数据uuid：%s".formatted(qq, code, email, gid, used, used_time, uuid));
+                        }
+                    } else {
+                        // 不通过
+                        // 获取examine表中的数据
+                        String gid = String.valueOf(queryRes.get("gid"));
+                        String email = String.valueOf(queryRes.get("email"));
+                        String refuse_reason = String.valueOf(queryRes.get("refuse_reason"));
+                        String uuid = String.valueOf(queryRes.get("uuid"));
+
+                        return MessageUtils.newChain(new At(senderID)).plus(" " + "QQ为%d的用户信息：\n该用户审核未通过，原因为：\n%s\n游戏id：%s\n邮箱：%s\n数据uuid：%s".formatted(qq, refuse_reason, gid, email, uuid));
+                    }
                 }
             } catch (SQLException e) {
                 e.printStackTrace();
                 return MessageUtils.newChain(new At(senderID)).plus(" " + "出现异常，请查看控制台报错信息");
             }
-        } else throw new InvalidSyntaxException();
+        } else {
+            throw new InvalidSyntaxException();
+        }
     }
+
 
     @Override
     public Map<String, Object> register() throws NoSuchMethodException {

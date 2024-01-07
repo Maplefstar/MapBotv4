@@ -25,6 +25,8 @@ ex-database:
 ex-username:
 ex-password:
 
+block-id: []
+
 QWeather-APIKey: 'qwq'  # 和风天气API密钥
 
 message-forward:
