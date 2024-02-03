@@ -4,6 +4,8 @@ import me.maplef.mapbotv4.MapbotPlugin;
 import me.maplef.mapbotv4.exceptions.InvalidSyntaxException;
 import me.maplef.mapbotv4.exceptions.NoPermissionException;
 import me.maplef.mapbotv4.managers.ConfigManager;
+import me.maplef.mapbotv4.utils.BotOperator;
+import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.message.data.*;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.jetbrains.annotations.NotNull;
@@ -13,11 +15,15 @@ import java.lang.reflect.Method;
 import java.sql.*;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Objects;
 
 public class DatabaseExamine implements MapbotPlugin {
 
+    Bot bot = BotOperator.getBot();
+
     ConfigManager configManager = new ConfigManager();
     FileConfiguration config = configManager.getConfig();
+    private final Long opGroup = config.getLong("op-group");
 
     static final String JDBC_DRIVER = "com.mysql.jdbc.Driver";
 
@@ -44,9 +50,8 @@ public class DatabaseExamine implements MapbotPlugin {
 
     @Override
     public MessageChain onEnable(@NotNull Long groupID, @NotNull Long senderID, Message[] args, @Nullable QuoteReply quoteReply) throws Exception {
-        ConfigManager configManager = new ConfigManager();
-        FileConfiguration config = configManager.getConfig();
-        if (!config.getLongList("super-admin-account").contains(senderID)) throw new NoPermissionException();
+        if(!Objects.requireNonNull(bot.getGroup(opGroup)).contains(senderID))
+            throw new NoPermissionException();
 
         if (args[0].contentToString().equals("get")) {
             // 获取指定qq的examine表中的数据
