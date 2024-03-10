@@ -54,12 +54,14 @@ public class Mapbot implements CommandExecutor, TabExecutor {
                 try (Connection c = new DatabaseOperator().getConnect();
                      Statement stmt = c.createStatement();
                      ResultSet res = stmt.executeQuery(String.format("SELECT * FROM PLAYER WHERE NAME = '%s';", player.getName()))) {
-                    if (res.getBoolean("MSGREC")) {
-                        stmt.executeUpdate(String.format("UPDATE PLAYER SET MSGREC = 0 WHERE NAME = '%s';", player.getName()));
-                        player.sendMessage(CU.t(msgStart + "你 &4&l关闭 &b了群消息接收"));
-                    } else {
-                        stmt.executeUpdate(String.format("UPDATE PLAYER SET MSGREC = 1 WHERE NAME = '%s';", player.getName()));
-                        player.sendMessage(CU.t(msgStart + "你 &a&l开启 &b了群消息接收"));
+                    if (res.next()) {
+                        if (res.getBoolean("MSGREC")) {
+                            stmt.executeUpdate(String.format("UPDATE PLAYER SET MSGREC = 0 WHERE NAME = '%s';", player.getName()));
+                            player.sendMessage(CU.t(msgStart + "你 &4&l关闭 &b了群消息接收"));
+                        } else {
+                            stmt.executeUpdate(String.format("UPDATE PLAYER SET MSGREC = 1 WHERE NAME = '%s';", player.getName()));
+                            player.sendMessage(CU.t(msgStart + "你 &a&l开启 &b了群消息接收"));
+                        }
                     }
                     return true;
                 } catch (Exception e) {
