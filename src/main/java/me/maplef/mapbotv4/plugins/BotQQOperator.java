@@ -26,16 +26,16 @@ public class BotQQOperator implements MapbotPlugin {
     static final FileConfiguration config = new ConfigManager().getConfig();
     static final FileConfiguration messageConfig = new ConfigManager().getMessageConfig();
 
-    public static final Long botAcc = config.getLong("bot-account");
-    private static final String botPassword = config.getString("bot-password");
     public static final Long opGroup = config.getLong("op-group");
     public static final Long playerGroup = config.getLong("player-group");
+    public static final String wsHost = config.getString("ws-host");
+    public static final String wsToken = config.getString("ws-token");
 
     public static void login(){
         Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
             Bukkit.getServer().getLogger().info(String.format("[%s] Mapbot正在登陆，请耐心等待...", Main.getInstance().getDescription().getName()));
             try{
-                BotOperator.login(botAcc, botPassword);
+                BotOperator.login(wsHost, wsToken);
                 BotOperator.getBot().getEventChannel().registerListenerHost(new PlayerGroupListeners());
                 BotOperator.getBot().getEventChannel().registerListenerHost(new CheckInGroupListeners());
                 if(!messageConfig.getString("enable-message.op-group", "").isEmpty())

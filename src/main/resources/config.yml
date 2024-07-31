@@ -1,6 +1,5 @@
-bot-account: 123  # QQ bot account
-bot-password: 'No_BUG_Report'  # QQ bot password
-bot-login-device: 'ANDROID_PHONE'  # ANDROID_PHONE, ANDROID_PAD, ANDROID_WATCH, IPAD, MACOS
+ws-host: 'ws://127.0.0.1:5800'
+ws-token: '114514'
 
 super-admin-account: [123, 456]  # super administrator accounts
 

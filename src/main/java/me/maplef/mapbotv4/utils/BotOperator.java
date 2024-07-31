@@ -3,39 +3,27 @@ package me.maplef.mapbotv4.utils;
 import me.maplef.mapbotv4.Main;
 import me.maplef.mapbotv4.managers.ConfigManager;
 import net.mamoe.mirai.Bot;
-import net.mamoe.mirai.BotFactory;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.network.LoginFailedException;
-import net.mamoe.mirai.utils.BotConfiguration;
-import net.mamoe.mirai.utils.DeviceInfo;
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.FileConfiguration;
+import top.mrxiaom.overflow.BotBuilder;
 
-import java.io.File;
+
 import java.util.Objects;
 
 public class BotOperator {
     private static Bot bot;
 
-    public static void login(Long qq, String password) throws LoginFailedException {
+    public static void login(String host, String token) throws LoginFailedException {
         ConfigManager configManager = new ConfigManager();
         FileConfiguration config = configManager.getConfig();
 
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(GlobalEventChannel.class.getClassLoader());
 
-        bot = BotFactory.INSTANCE.newBot(qq, password, new BotConfiguration(){{
-            setWorkingDir(Main.getInstance().getDataFolder());
-            redirectNetworkLogToDirectory();
-            redirectBotLogToDirectory();
-            setProtocol(MiraiProtocol.valueOf(config.getString("bot-login-device", "ANDROID_PHONE")));
-            setCacheDir(new File("cache"));
-            fileBasedDeviceInfo();
-            if(new File(getWorkingDir(), "device.json").exists())
-                setDeviceInfo(bot1 -> DeviceInfo.from(new File(getWorkingDir(), "device.json")));
-        }});
-        bot.login();
+        bot = BotBuilder.positive(host).token(token).connect();
 
         Thread.currentThread().setContextClassLoader(loader);
     }
