@@ -18,28 +18,28 @@ public class InvitationCodeApiClient {
     static ConfigManager configManager = new ConfigManager();
     static FileConfiguration config = configManager.getConfig();
 
-    private static final String API_URL = "https://examine.catland.top/api/invitationCode/check";
+    private static final String API_URL = "https://invitationcode.nekocafe.moe/api/check";
     private static final String ACCESS_TOKEN = config.getString("access-token");
 
     public static ApiResponse checkInvitationCode(long qq, String code, boolean markUsed) throws IOException {
         // 构建请求体JSON字符串
-        String requestBody = String.format("{\"invitationCode\":\"%s\",\"qq\":\"%s\",\"markUsed\":%s}", code, qq, markUsed);
+        ApiRequest apiRequest = new ApiRequest();
+        apiRequest.setQQ(qq);
+        apiRequest.setCode(code);
+
         // 发送POST请求并获取响应
-        HttpResponse response = sendPostRequest(requestBody);
+        HttpResponse response = sendPostRequest(apiRequest);
         // 处理响应
         return handleResponse(response);
     }
 
-    private static HttpResponse sendPostRequest(String requestBody) throws IOException {
+    private static HttpResponse sendPostRequest(ApiRequest apiRequest) throws IOException {
         CloseableHttpClient httpClient = HttpClients.createDefault();
-        HttpPost httpPost = new HttpPost(InvitationCodeApiClient.API_URL);
+        HttpPost httpPost = new HttpPost(String.format("%s?qq=%s&code=%s",API_URL,apiRequest.getQQ(),apiRequest.getCode()));
 
         // 设置请求头
         httpPost.setHeader("Content-Type", "application/json");
         httpPost.setHeader("Authorization", "Bearer " + InvitationCodeApiClient.ACCESS_TOKEN);
-
-        // 设置请求体
-        httpPost.setEntity(new StringEntity(requestBody));
 
         return httpClient.execute(httpPost);
     }
@@ -79,6 +79,27 @@ public class InvitationCodeApiClient {
 
         public void setBody(String body) {
             this.body = body;
+        }
+    }
+
+    public static class ApiRequest {
+        private String code;
+        private long qq;
+
+        public String getCode() {
+            return code;
+        }
+
+        public void setCode(String code) {
+            this.code = code;
+        }
+
+        public long getQQ() {
+            return qq;
+        }
+
+        public void setQQ(long qq) {
+            this.qq = qq;
         }
     }
 

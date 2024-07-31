@@ -36,21 +36,21 @@ public class GameListeners implements Listener {
     @EventHandler
     public void onMessageForward(AsyncChatEvent e) {
         FileConfiguration config = configManager.getConfig();
-
         for (String id : config.getStringList("block-id")) {
             if (e.getPlayer().getName().equalsIgnoreCase(id.toLowerCase())) return;
         }
-
         Long groupID = config.getLong("player-group");
-
         if(!config.getBoolean("message-forward.server-to-group.enable", true)) return;
-        if(e.isCancelled()) return;
-
+        // temporary
+        if (((TextComponent) e.message()).content().equalsIgnoreCase("isCancelled")) {
+            Bukkit.getServer().getLogger().info("消息事件是否被取消：" + e.isCancelled());
+            return;
+        }
+//        if(e.isCancelled()) return;
         MessageChain msg = null;
 
         Player player = e.getPlayer();
         String pattern = "^[@][\\w]*\\s\\w+$"; String receivedMessage = ((TextComponent) e.message()).content();
-
         switch (config.getString("message-forward.server-to-group.mode", "all")) {
             case "all" -> {
                 if (Pattern.matches(pattern, receivedMessage)) {
