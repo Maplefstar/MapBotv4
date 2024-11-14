@@ -19,6 +19,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.File;
 import java.sql.SQLException;
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class Main extends JavaPlugin {
     private final FileConfiguration onlineTimeConfig = YamlConfiguration.loadConfiguration(new File(".\\plugins\\PlayTimeTracker\\database.yml"));
@@ -26,13 +27,14 @@ public class Main extends JavaPlugin {
     private static Economy econ = null;
 
     ConfigManager configManager;
+    Logger logger = this.getLogger();
 
     @Override
     public void onEnable() {
         instance = this;
 
         if(!getDataFolder().exists()){
-            Bukkit.getServer().getLogger().severe(String.format("[%s] 未检测到配置文件，请在生成的配置文件中修改相关配置再启动本插件", getDescription().getName()));
+            logger.severe("未检测到配置文件，请在生成的配置文件中修改相关配置再启动本插件");
             this.saveDefaultConfig();
             this.saveResource("messages.yml", false);
             this.saveResource("auto_reply.yml", false);
@@ -41,15 +43,20 @@ public class Main extends JavaPlugin {
             return;
         }
 
+        FixProtocolVersion.update();
+        FixProtocolVersion.fetch(BotConfiguration.MiraiProtocol.valueOf(this.getConfig().getString("bot-login-device", "ANDROID_PHONE")),
+                this.getConfig().getString("qsign-qq-version", "8.9.63"));
+        FixProtocolVersion.load(BotConfiguration.MiraiProtocol.valueOf(this.getConfig().getString("bot-login-device", "ANDROID_PHONE")));
+
         configManager = new ConfigManager();
         FileConfiguration messageConfig = configManager.getMessageConfig();
 
-        Bukkit.getServer().getLogger().info(String.format("[%s] %s", getDescription().getName(), messageConfig.getString("enable-message.console")));
-        Bukkit.getServer().getLogger().info(String.format("[%s] Mapbot交流群：835413855，欢迎加群讨论！", getDescription().getName()));
+        logger.info(CU.t(messageConfig.getString("enable-message.console")));
+        logger.info("Mapbot交流群：835413855，欢迎加群讨论！");
 
         if (!setupEconomy()) {
-            Bukkit.getServer().getLogger().severe(String.format("[%s] 找不到前置插件 vault，请安装该插件！", getDescription().getName()));
-            Bukkit.getServer().getLogger().severe(String.format("[%s] 如已安装 vault 请确认是否已安装任一经济管理插件如 EssentialsX 等", getDescription().getName()));
+            logger.severe("找不到前置插件 vault，请安装该插件！");
+            logger.severe("如已安装 vault 请确认是否已安装任一经济管理插件如 EssentialsX 等");
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
@@ -71,7 +78,7 @@ public class Main extends JavaPlugin {
 
         new LoopJobManager().register();
 
-        getServer().broadcast(Component.text(CU.t(messageConfig.getString("message-prefix") + messageConfig.getString("enable-message.server"))));
+        Bukkit.getServer().broadcast(Component.text(CU.t(messageConfig.getString("message-prefix") + messageConfig.getString("enable-message.server"))));
 
         NeteaseMusicUtils.loadCookie();
 
@@ -91,7 +98,7 @@ public class Main extends JavaPlugin {
         if(BotOperator.getBot() != null) BotQQOperator.logout();
 
         getServer().broadcast(Component.text(CU.t(messageConfig.getString("message-prefix") + messageConfig.getString("disable-message.server"))));
-        Bukkit.getServer().getLogger().info(String.format("[%s] %s", getDescription().getName(), messageConfig.getString("disable-message.console")));
+        logger.info(messageConfig.getString("disable-message.console"));
     }
 
     private boolean setupEconomy() {

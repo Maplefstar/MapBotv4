@@ -1,7 +1,7 @@
 ws-host: 'ws://127.0.0.1:5800'
 ws-token: '114514'
 
-super-admin-account: [123, 456]  # super administrator accounts
+super-admin-account: [123, 456]  # super administrator QQ accounts
 
 player-group: 10000  # the number of QQ group where players are in
 op-group: 10086  # the group where managers and operators in

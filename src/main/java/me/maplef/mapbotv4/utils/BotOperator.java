@@ -12,8 +12,11 @@ import top.mrxiaom.overflow.BotBuilder;
 
 
 import java.util.Objects;
+import java.util.logging.Logger;
 
 public class BotOperator {
+    public static final Logger logger = Main.getInstance().getLogger();
+
     private static Bot bot;
 
     public static void login(String host, String token) throws LoginFailedException {
@@ -33,9 +36,9 @@ public class BotOperator {
             try{
                 Objects.requireNonNull(bot.getGroup(groupID)).sendMessage(message);
             } catch (NullPointerException e){
-                Bukkit.getLogger().info(String.format("[%s] QQ账户正在登陆中，登陆期间的消息将不会转发", Main.getInstance().getDescription().getName()));
+                logger.info("QQ账户正在登陆中，登陆期间的消息将不会转发");
             } catch (IllegalStateException e){
-                Bukkit.getServer().getLogger().severe(String.format("[%s] 发送消息失败，QQ账户可能被风控，请及时处理", Main.getInstance().getDescription().getName()));
+                logger.severe("发送消息失败，QQ账户可能被风控，请及时处理");
             }
         });
     }
@@ -45,9 +48,9 @@ public class BotOperator {
             try{
                 Objects.requireNonNull(bot.getGroup(groupID)).sendMessage(message);
             } catch (NullPointerException e){
-                Bukkit.getLogger().info(String.format("[%s] QQ账户正在登陆中，登陆期间的消息将不会转发", Main.getInstance().getDescription().getName()));
+                logger.info("QQ账户正在登陆中，登陆期间的消息将不会转发");
             } catch (IllegalStateException e){
-                Bukkit.getServer().getLogger().severe(String.format("[%s] 发送消息失败，QQ账户可能被风控，请及时处理", Main.getInstance().getDescription().getName()));
+                logger.severe("发送消息失败，QQ账户可能被风控，请及时处理");
             }
         });
     }

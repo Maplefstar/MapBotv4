@@ -10,6 +10,7 @@ import me.maplef.mapbotv4.exceptions.MessageLengthOutOfBoundException;
 import me.maplef.mapbotv4.exceptions.PlayerNotFoundException;
 import me.maplef.mapbotv4.managers.ConfigManager;
 import me.maplef.mapbotv4.managers.PluginManager;
+import me.maplef.mapbotv4.plugins.WelcomeNew;
 import me.maplef.mapbotv4.utils.*;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.ComponentLike;
@@ -57,7 +58,6 @@ public class PlayerGroupListeners extends SimpleListenerHost {
     @Override
     public void handleException(@NotNull CoroutineContext context, @NotNull Throwable exception) {
         Bukkit.getServer().getLogger().severe(exception.getMessage());
-        exception.printStackTrace();
     }
 
     @EventHandler
@@ -66,8 +66,7 @@ public class PlayerGroupListeners extends SimpleListenerHost {
         if (e.getGroup().getId() != opGroup && e.getGroup().getId() != playerGroup)
             return;
 
-        String commandPattern = "^" + config.getString("bot-command-prefix") + "[\\u4E00-\\u9FA5A-Za-z0-9_]+(\\s([\\u4E00-\\u9FA5A-Za-z0-9_\\[\\]\\s]|[^\\x00-\\xff]|\\*|;|'|=|!|\\.|/|:)+)?$";
-        String mailPattern = "[\\w]+@[A-Za-z0-9]+(\\.[A-Za-z0-9]+){1,2}";
+        String commandPattern = "^" + config.getString("bot-command-prefix") + "[\\u4E00-\\u9FA5A-Za-z0-9_]+(\\s([\\u4E00-\\u9FA5A-Za-z0-9_\\[\\]\\s]|[^\\x00-\\xff])+)?$";
 
         MessageContent messageContent = e.getMessage().get(PlainText.Key);
         if (messageContent == null) return;
@@ -101,9 +100,6 @@ public class PlayerGroupListeners extends SimpleListenerHost {
             } catch (NullPointerException ignored) {
             } catch (Exception ex) {
                 ex.printStackTrace();
-            }
-            if (message.build().isEmpty()) {
-                return;
             }
             BotOperator.sendGroupMessage(e.getGroup().getId(), message.build());
         });
@@ -162,7 +158,7 @@ public class PlayerGroupListeners extends SimpleListenerHost {
             try {
                 sendFlag = (boolean) DatabaseOperator.queryPlayer(player.getName()).get("MSGREC");
             } catch (SQLException ex) {
-                ex.printStackTrace();
+                Bukkit.getLogger().warning(ex.getClass() + ": " + ex.getMessage());
             } catch (PlayerNotFoundException ignored) {
             }
             if (!sendFlag) continue;
@@ -353,12 +349,7 @@ public class PlayerGroupListeners extends SimpleListenerHost {
 
         if (e.getGroupId() != config.getLong("player-group")) return;
 
-        StringBuilder msg = new StringBuilder();
-
-        for (String singleMsg : messages.getStringList("welcome-new-message.player-group.group"))
-            msg.append(singleMsg).append("\n");
-
-        BotOperator.sendGroupMessage(e.getGroupId(), msg.toString().trim());
+        BotOperator.sendGroupMessage(e.getGroupId(), new WelcomeNew().WelcomeMessage());
         Bukkit.getServer().broadcast(Component.text(CU.t(messages.getString("message-prefix") + messages.getString("welcome-new-message.player-group.server"))));
 
         String message = Objects.requireNonNull(messages.getString("congratulation-message"))
@@ -403,10 +394,11 @@ public class PlayerGroupListeners extends SimpleListenerHost {
             }.runTask(Main.getPlugin(Main.class));
 
             try {
-                String order = String.format("DELETE FROM PLAYER WHERE NAME = '%s';", ID);
-                new DatabaseOperator().executeCommand(order);
-            } catch (SQLException ex) {
-                ex.printStackTrace();
+                String bindDelCommand = String.format("DELETE FROM PLAYER WHERE NAME = '%s';", ID);
+                PreparedStatement ps = new DatabaseOperator().getConnect().prepareStatement(bindDelCommand);
+                ps.execute(); ps.close();
+            } catch (SQLException ex){
+                Bukkit.getServer().getLogger().warning(ex.getMessage());
             }
 
             opGroupMsg = Objects.requireNonNull(messages.getString("exit-player-group-message.op-group"))
