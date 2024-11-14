@@ -8,7 +8,6 @@ import java.sql.*;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Objects;
 
 public class DatabaseOperator {
     ConfigManager configManager = new ConfigManager();
@@ -54,7 +53,6 @@ public class DatabaseOperator {
     }
 
     private Connection connect() {
-        FileConfiguration config = configManager.getConfig();
         Connection conn = null;
         try {
             Class.forName(JDBC_DRIVER);

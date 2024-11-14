@@ -35,7 +35,7 @@ public class BotQQOperator implements MapbotPlugin {
 
     public static void login(){
         Bukkit.getScheduler().runTaskAsynchronously(Main.getInstance(), () -> {
-            Bukkit.getServer().getLogger().info(String.format("[%s] Mapbot正在登陆，请耐心等待...", Main.getInstance().getDescription().getName()));
+            Bukkit.getServer().getLogger().info(String.format("[%s] Mapbot正在登陆，请耐心等待...", Main.getInstance().getPluginMeta().getName()));
             try{
                 BotOperator.login(wsHost, wsToken);
                 BotOperator.getBot().getEventChannel().registerListenerHost(new PlayerGroupListeners());

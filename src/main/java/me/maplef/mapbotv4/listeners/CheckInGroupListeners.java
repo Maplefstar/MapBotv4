@@ -2,11 +2,9 @@ package me.maplef.mapbotv4.listeners;
 
 import me.maplef.mapbotv4.managers.ConfigManager;
 import me.maplef.mapbotv4.utils.BotOperator;
-import net.mamoe.mirai.Mirai;
 import net.mamoe.mirai.event.EventHandler;
 import net.mamoe.mirai.event.SimpleListenerHost;
 import net.mamoe.mirai.event.events.MemberJoinEvent;
-import net.mamoe.mirai.event.events.MemberJoinRequestEvent;
 import net.mamoe.mirai.message.data.At;
 import net.mamoe.mirai.message.data.MessageChainBuilder;
 import org.bukkit.configuration.file.FileConfiguration;

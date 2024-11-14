@@ -23,7 +23,7 @@ public class BaiduAccessTokenUpdate implements Job {
         try {
             config.save(new File(Main.getInstance().getDataFolder(), "config.yml"));
         } catch (IOException e) {
-            Bukkit.getServer().getLogger().warning(String.format("[%s] 更新 Baidu_token 出错", Main.getInstance().getDescription().getName()));
+            Bukkit.getServer().getLogger().warning(String.format("[%s] 更新 Baidu_token 出错", Main.getInstance().getPluginMeta().getName()));
         }
     }
 

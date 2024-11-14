@@ -5,9 +5,10 @@ import me.maplef.mapbotv4.MapbotPlugin;
 import me.maplef.mapbotv4.exceptions.CommandNotFoundException;
 import me.maplef.mapbotv4.exceptions.InvalidSyntaxException;
 import net.mamoe.mirai.message.data.*;
-import org.bukkit.plugin.PluginDescriptionFile;
 import org.reflections.Reflections;
 import org.reflections.util.ConfigurationBuilder;
+
+import io.papermc.paper.plugin.configuration.PluginMeta;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
@@ -24,15 +25,18 @@ public class PluginManager {
     }
 
     @SuppressWarnings("unchecked")
-    public MessageChain commandHandler(String command, Long groupID, Long senderID , Message[] args, QuoteReply quoteReply) throws Exception{
+    public MessageChain commandHandler(String command, Long groupID, Long senderID, Message[] args,
+            QuoteReply quoteReply) throws Exception {
         switch (command) {
             case "help", "菜单" -> {
                 MessageChainBuilder helpMsg = new MessageChainBuilder();
                 helpMsg.append(new At(senderID)).append(" 你好，以下是我支持的命令\n(其中\"<>\"内的为必填参数，\"[]\"内的为可选参数)\n——————\n");
 
                 for (Class<? extends MapbotPlugin> singleClass : this.pluginClasses) {
-                    Map<String, Object> pluginInfo = (Map<String, Object>) singleClass.getMethod("register").invoke(singleClass.getDeclaredConstructor().newInstance());
-                    if(pluginInfo == null) continue;
+                    Map<String, Object> pluginInfo = (Map<String, Object>) singleClass.getMethod("register")
+                            .invoke(singleClass.getDeclaredConstructor().newInstance());
+                    if (pluginInfo == null)
+                        continue;
 
                     Map<String, String> pluginUsage = (Map<String, String>) pluginInfo.get("usages");
 
@@ -43,10 +47,10 @@ public class PluginManager {
                 return helpMsg.build();
             }
             case "about", "关于" -> {
-                PluginDescriptionFile description = Main.getInstance().getDescription();
-                String name = description.getName();
-                String author = description.getAuthors().get(0);
-                String version = description.getVersion();
+                PluginMeta pluginMeta = Main.getInstance().getPluginMeta();
+                String name = pluginMeta.getName();
+                String author = pluginMeta.getAuthors().get(0);
+                String version = pluginMeta.getVersion();
                 String github_url = "https://github.com/Maplefsnow/MapBotv4";
 
                 return MessageUtils.newChain(new PlainText(String.format(
@@ -61,11 +65,14 @@ public class PluginManager {
                 StringBuilder pluginInfoStrBuilder = new StringBuilder();
 
                 for (Class<? extends MapbotPlugin> singleClass : this.pluginClasses) {
-                    Map<String, Object> pluginInfo = (Map<String, Object>) singleClass.getMethod("register").invoke(singleClass.getDeclaredConstructor().newInstance());
-                    if(pluginInfo == null) continue;
+                    Map<String, Object> pluginInfo = (Map<String, Object>) singleClass.getMethod("register")
+                            .invoke(singleClass.getDeclaredConstructor().newInstance());
+                    if (pluginInfo == null)
+                        continue;
 
                     pluginInfoStrBuilder.append(String.format("%s - %s\nv%s\nAuthor: %s\n\n",
-                            pluginInfo.get("name"), pluginInfo.get("description"), pluginInfo.get("version"), pluginInfo.get("author")));
+                            pluginInfo.get("name"), pluginInfo.get("description"), pluginInfo.get("version"),
+                            pluginInfo.get("author")));
                 }
 
                 String pluginInfoStr = pluginInfoStrBuilder.toString();
@@ -75,14 +82,18 @@ public class PluginManager {
             }
             default -> {
                 for (Class<? extends MapbotPlugin> singleClass : this.pluginClasses) {
-                    Map<String, Object> pluginInfo = (Map<String, Object>) singleClass.getMethod("register").invoke(singleClass.getDeclaredConstructor().newInstance());
-                    if(pluginInfo == null) continue;
+                    Map<String, Object> pluginInfo = (Map<String, Object>) singleClass.getMethod("register")
+                            .invoke(singleClass.getDeclaredConstructor().newInstance());
+                    if (pluginInfo == null)
+                        continue;
 
                     Map<String, Method> pluginCommands = (Map<String, Method>) pluginInfo.get("commands");
 
                     if (pluginCommands.containsKey(command)) {
                         try {
-                            return (MessageChain) pluginCommands.get(command).invoke(singleClass.getDeclaredConstructor().newInstance(), groupID, senderID, args, quoteReply);
+                            return (MessageChain) pluginCommands.get(command).invoke(
+                                    singleClass.getDeclaredConstructor().newInstance(), groupID, senderID, args,
+                                    quoteReply);
                         } catch (InvocationTargetException e) {
                             MessageChainBuilder errorMsg = new MessageChainBuilder();
                             errorMsg.append(new At(senderID)).append(" ");

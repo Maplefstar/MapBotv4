@@ -9,7 +9,6 @@ import me.maplef.mapbotv4.utils.DatabaseOperator;
 import me.maplef.mapbotv4.utils.MapbotLoginSolver;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
-import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -23,7 +22,7 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Mapbot implements CommandExecutor, TabExecutor {
+public class Mapbot implements TabExecutor {
     ConfigManager configManager = new ConfigManager();
 
     private final String msgHeader = "&b&l============ &d小枫4号 &b&l============&f\n";

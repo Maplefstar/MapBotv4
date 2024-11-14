@@ -25,7 +25,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 import java.util.regex.Pattern;
@@ -90,7 +89,7 @@ public class GameListeners implements Listener {
                 BotOperator.sendGroupMessage(groupID, msg);
             }
 
-            default -> Bukkit.getServer().getLogger().warning(String.format("[%s] config.yml: message-forward.server-to-group.mode 选择错误，请重新填写", Main.getInstance().getDescription().getName()));
+            default -> Bukkit.getServer().getLogger().warning(String.format("[%s] config.yml: message-forward.server-to-group.mode 选择错误，请重新填写", Main.getInstance().getPluginMeta().getName()));
         }
     }
 

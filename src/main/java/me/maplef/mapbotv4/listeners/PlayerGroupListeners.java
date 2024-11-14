@@ -35,6 +35,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import org.jetbrains.annotations.NotNull;
 
 import java.io.IOException;
+import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.function.Consumer;
@@ -49,7 +50,6 @@ public class PlayerGroupListeners extends SimpleListenerHost {
     private final Long playerGroup = config.getLong("player-group");
     private final Long checkinGroup = config.getLong("check-in-group");
 
-    private final Bot bot = BotOperator.getBot();
     private final PluginManager pluginManager = new PluginManager();
 
     static MessageChain repeatedMessage = null;
@@ -130,7 +130,7 @@ public class PlayerGroupListeners extends SimpleListenerHost {
             }
 
             default -> {
-                Bukkit.getServer().getLogger().warning(String.format("[%s] config.yml: message-forward.group-to-server.mode 选择错误，请重新填写", Main.getInstance().getDescription().getName()));
+                Bukkit.getServer().getLogger().warning(String.format("[%s] config.yml: message-forward.group-to-server.mode 选择错误，请重新填写", Main.getInstance().getPluginMeta().getName()));
                 return;
             }
         }
@@ -280,7 +280,7 @@ public class PlayerGroupListeners extends SimpleListenerHost {
                         }
                     }
                     default -> {
-                        Bukkit.getServer().getLogger().warning(String.format("[%s] auto_reply.yml: %s.mode 选择错误，请重新填写", Main.getInstance().getDescription().getName(), ruleKey));
+                        Bukkit.getServer().getLogger().warning(String.format("[%s] auto_reply.yml: %s.mode 选择错误，请重新填写", Main.getInstance().getPluginMeta().getName(), ruleKey));
                         return;
                     }
                 }
@@ -308,7 +308,7 @@ public class PlayerGroupListeners extends SimpleListenerHost {
                     }
 
                     default ->
-                            Bukkit.getServer().getLogger().warning(String.format("[%s] auto_reply.yml: %s.reply.type 选择错误，请重新填写", Main.getInstance().getDescription().getName(), ruleKey));
+                            Bukkit.getServer().getLogger().warning(String.format("[%s] auto_reply.yml: %s.reply.type 选择错误，请重新填写", Main.getInstance().getPluginMeta().getName(), ruleKey));
                 }
 
                 break;

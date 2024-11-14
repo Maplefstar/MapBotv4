@@ -6,7 +6,7 @@
 
     <groupId>me.maplef</groupId>
     <artifactId>mapbotv4</artifactId>
-    <version>0.16.3</version>
+    <version>0.16.4-alpha1</version>
     <packaging>jar</packaging>
     <build>
         <plugins>
@@ -77,9 +77,9 @@
             <version>2.16.0</version>
         </dependency>
         <dependency>
-            <groupId>top.mrxiaom</groupId>
+            <groupId>top.mrxiaom.mirai</groupId>
             <artifactId>overflow-core</artifactId>
-            <version>2.16.0-bc70f0b-SNAPSHOT</version>
+            <version>1.0.0</version>
             <scope>compile</scope>
         </dependency>
         <dependency>
