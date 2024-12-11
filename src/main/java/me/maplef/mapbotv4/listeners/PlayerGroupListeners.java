@@ -347,13 +347,12 @@ public class PlayerGroupListeners extends SimpleListenerHost {
         FileConfiguration config = configManager.getConfig();
         FileConfiguration messages = configManager.getMessageConfig();
 
-        if (e.getGroupId() != config.getLong("player-group")) return;
+        if (e.getGroupId() != config.getLong("player-group", 0)) return;
 
         BotOperator.sendGroupMessage(e.getGroupId(), new WelcomeNew().WelcomeMessage());
         Bukkit.getServer().broadcast(Component.text(CU.t(messages.getString("message-prefix") + messages.getString("welcome-new-message.player-group.server"))));
 
-        String message = Objects.requireNonNull(messages.getString("congratulation-message"))
-                .replace("{PLAYER}", e.getMember().getNameCard());
+        String message = messages.getString("congratulation-message", "").replace("{PLAYER}", e.getMember().getNick());
         BotOperator.sendGroupMessage(checkinGroup, message);
     }
 
@@ -377,12 +376,12 @@ public class PlayerGroupListeners extends SimpleListenerHost {
 
         if (ID == null) {
             opGroupMsg = Objects.requireNonNull(messages.getString("exit-player-group-message.op-group"))
-                    .replace("{PLAYER}", e.getMember().getNameCard())
+                    .replace("{PLAYER}", e.getMember().getNick())
                     .replace("{SERVERNAME}", Objects.requireNonNull(messages.getString("server-name")))
                     + "，未检测到该玩家的绑定ID行为";
 
             playerGroupMsg = Objects.requireNonNull(messages.getString("exit-player-group-message.player-group"))
-                    .replace("{PLAYER}", e.getMember().getNameCard())
+                    .replace("{PLAYER}", e.getMember().getNick())
                     .replace("{SERVERNAME}", Objects.requireNonNull(messages.getString("server-name")));
         } else {
             String whitelistDelCommand = String.format("whitelist remove %s", ID);

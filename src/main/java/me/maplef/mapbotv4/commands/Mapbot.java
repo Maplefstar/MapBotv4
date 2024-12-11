@@ -163,6 +163,17 @@ public class Mapbot implements TabExecutor {
                 return true;
             }
 
+            case "relogin" -> {
+                if (!(sender instanceof CommandSender)) {
+                    sender.sendMessage(CU.t(msgStart + "&c仅可在控制台使用该命令"));
+                    return true;
+                }
+
+                BotQQOperator.reLogin();
+                
+                return true;
+            }
+
             case "captcha" -> {
                 if (args.length >= 2) {
                     sender.sendMessage(CU.t(msgStart + "&a已将验证码提交到服务器"));

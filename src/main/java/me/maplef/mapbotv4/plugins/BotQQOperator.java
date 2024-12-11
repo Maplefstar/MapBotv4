@@ -57,8 +57,13 @@ public class BotQQOperator implements MapbotPlugin {
         if(!messageConfig.getString("disable-message.player-group", "").isEmpty())
             Objects.requireNonNull(BotOperator.getBot().getGroup(playerGroup)).sendMessage(Objects.requireNonNull(messageConfig.getString("disable-message.player-group")));
 
-        BotOperator.getBot().close();
+        BotOperator.logout();
         logger.info(String.format("QQ账号 %d 已退出登陆", BotOperator.getBot().getId()));
+    }
+
+    public static void reLogin() {
+        logout();
+        login();
     }
 
     @Override
@@ -69,6 +74,7 @@ public class BotQQOperator implements MapbotPlugin {
 
         if(args[0].contentToString().equals("login")) login();
         else if(args[0].contentToString().equals("logout")) logout();
+        else if(args[0].contentToString().equals("relogin")) reLogin();
         else throw new IllegalArgumentException("未知的参数: " + args[0]);
 
         return null;

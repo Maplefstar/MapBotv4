@@ -19,14 +19,20 @@ public class BotOperator {
 
     private static Bot bot;
 
-    public static void login(String host, String token) throws LoginFailedException {
-        ConfigManager configManager = new ConfigManager();
-        FileConfiguration config = configManager.getConfig();
-
+    public synchronized static void login(String host, String token) throws LoginFailedException {
         ClassLoader loader = Thread.currentThread().getContextClassLoader();
         Thread.currentThread().setContextClassLoader(GlobalEventChannel.class.getClassLoader());
 
         bot = BotBuilder.positive(host).token(token).connect();
+
+        Thread.currentThread().setContextClassLoader(loader);
+    }
+
+    public synchronized static void logout() {
+        ClassLoader loader = Thread.currentThread().getContextClassLoader();
+        Thread.currentThread().setContextClassLoader(GlobalEventChannel.class.getClassLoader());
+
+        bot.close();
 
         Thread.currentThread().setContextClassLoader(loader);
     }
