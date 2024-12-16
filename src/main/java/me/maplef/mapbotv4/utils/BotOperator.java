@@ -1,13 +1,11 @@
 package me.maplef.mapbotv4.utils;
 
 import me.maplef.mapbotv4.Main;
-import me.maplef.mapbotv4.managers.ConfigManager;
 import net.mamoe.mirai.Bot;
 import net.mamoe.mirai.event.GlobalEventChannel;
 import net.mamoe.mirai.message.data.MessageChain;
 import net.mamoe.mirai.network.LoginFailedException;
 import org.bukkit.Bukkit;
-import org.bukkit.configuration.file.FileConfiguration;
 import top.mrxiaom.overflow.BotBuilder;
 
 

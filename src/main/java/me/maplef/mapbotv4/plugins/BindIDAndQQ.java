@@ -59,11 +59,12 @@ public class BindIDAndQQ implements MapbotPlugin {
             try{
                 jsonString = HttpUtils.doGet(url);
             } catch (Exception exception){
-                throw new Exception("该ID非正版ID，请检查输入是否正确");
+                throw new Exception("向mojang服务器请求认证用户名失败，请稍后重试");
             }
+            
             JSONObject jsonRes = JSON.parseObject(jsonString);
-
             if(jsonRes == null) throw new Exception("向mojang服务器请求认证用户名失败，请稍后重试");
+            if(jsonRes.containsKey("errorMessage")) throw new Exception("该ID非正版ID，请检查输入是否正确");
 
             StringBuilder fixedUUIDBuilder = new StringBuilder().append(jsonRes.getString("id"));
             fixedUUIDBuilder.insert(8, '-'); fixedUUIDBuilder.insert(13, '-');
